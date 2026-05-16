@@ -531,7 +531,15 @@ async function edAPI(path, body, token) {
 }
 
 async function loginED(username, password) {
-  const payload = `data=${encodeURIComponent(JSON.stringify({identifiant:username,motdepasse:btoa(password),isRelogin:false,uuid:'',fa:[]}))}`;
+  // ED attend le mot de passe en clair (pas encodé en base64)
+  const loginData = {
+    identifiant: username,
+    motdepasse: password,
+    isRelogin: false,
+    uuid: '',
+    fa: []
+  };
+  const payload = 'data=' + encodeURIComponent(JSON.stringify(loginData));
   const res = await edAPI('/v3/login.awp?v=4', payload, null);
   return res;
 }
