@@ -238,7 +238,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="field">
         <label>Token ED <span style="font-weight:400;color:var(--text3);">(optionnel — contourne le QCM)</span></label>
         <input type="password" id="inp-token" placeholder="Colle ton token ici…"/>
-        <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">Sur <a href="https://ecoledirecte.com" target="_blank" style="color:var(--accent)">ecoledirecte.com</a> → F12 → Application → Local Storage → clé <b>token</b></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">Sur <a href="https://ecoledirecte.com" target="_blank" style="color:var(--accent)">ecoledirecte.com</a> → F12 (Ctrl+Shift+I) → Console → colle la commande indiquée ci-dessous</div>
+      </div>
+      <div class="field">
+        <label>ID de compte ED <span style="font-weight:400;color:var(--text3);">(obligatoire avec le token)</span></label>
+        <input type="text" id="inp-edid" placeholder="Ex: 10447"/>
+        <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">Dans la console sur ecoledirecte.com tape : <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11px;">JSON.parse(sessionStorage.getItem('accounts'))?.payload?.accounts?.[0]?.id</code></div>
       </div>
       <div class="login-error" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Se connecter</button>
@@ -564,19 +569,21 @@ async function fetchAllData(account) {
   let id = null;
   let type = 'E';
 
-  if(token) {
-    // Token manuel : on récupère l'id depuis Session Storage d'ED via le proxy login
+  if(token && account.edId) {
+    // Token + id manuel : on fetch directement sans passer par le login
+    token = account.manualToken;
+    id = account.edId;
+    type = 'E';
+    eleve = {id, nomClasse:''};
+  } else if(token) {
+    // Token sans id : on essaie le login quand même
     const infoRes = await edAPI('/v3/login.awp?v=4',
       'data='+encodeURIComponent(JSON.stringify({identifiant:account.username,motdepasse:account.password,isRelogin:false,uuid:'',fa:[]})),
       token);
     eleve = infoRes?.data?.accounts?.[0] || null;
     if(eleve) { id = eleve.id; type = eleve.typeCompte||'E'; }
-    // Si login échoue avec le token, on essaie quand même avec l'id stocké
-    if(!id) {
-      // Essaie de récupérer les notes sans id (certaines versions d'ED le permettent)
-      const stored = localStorage.getItem('ed_id_'+account.username);
-      if(stored) { id = stored; }
-    }
+    const stored = localStorage.getItem('ed_id_'+account.username);
+    if(!id && stored) { id = stored; }
   } else {
     const login = await loginED(account.username, account.password);
     if(!login || login.code !== 200) {
@@ -757,7 +764,8 @@ async function doLogin(){
   const t=document.getElementById('inp-token').value.trim();
   const btn=document.getElementById('login-btn');
   btn.disabled=true;btn.textContent='Connexion…';
-  const acc={username:u,password:p,displayname:n,color:COLORS[accounts.length%COLORS.length],manualToken:t||null};
+  const edid=document.getElementById('inp-edid').value.trim();
+  const acc={username:u,password:p,displayname:n,color:COLORS[accounts.length%COLORS.length],manualToken:t||null,edId:edid||null};
   accounts.push(acc);
   localStorage.setItem('edu_accounts',JSON.stringify(accounts));
   activeIdx=accounts.length-1;
