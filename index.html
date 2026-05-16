@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EcoleDirecte Ultra</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f5f7;--bg2:#ffffff;--bg3:#e8e8ed;
+  --text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;
+  --accent:#0071e3;--accent2:#34c759;--accent3:#ff3b30;--accent4:#ff9f0a;
+  --border:rgba(0,0,0,0.08);
+  --shadow:0 2px 20px rgba(0,0,0,0.06);
+  --shadow2:0 8px 40px rgba(0,0,0,0.12);
+  --radius:16px;--radius2:12px;
+}
+[data-theme="dark"]{
+  --bg:#000;--bg2:#1c1c1e;--bg3:#2c2c2e;
+  --text:#f5f5f7;--text2:#98989d;--text3:#48484a;
+  --border:rgba(255,255,255,0.08);
+  --shadow:0 2px 20px rgba(0,0,0,0.4);
+  --shadow2:0 8px 40px rgba(0,0,0,0.6);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.login-card{background:var(--bg2);border-radius:24px;padding:48px 40px;width:100%;max-width:400px;box-shadow:var(--shadow2);border:1px solid var(--border);}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.login-logo .icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.login-logo span{font-size:20px;font-weight:600;letter-spacing:-.5px;}
+.login-card h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+.login-card p{color:var(--text2);font-size:14px;margin-bottom:28px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px;}
+.field input{width:100%;padding:13px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;font-size:15px;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.15);}
+.btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:4px;}
+.btn-primary:hover{opacity:.9;}
+.btn-primary:disabled{opacity:.5;cursor:default;}
+.login-note{font-size:12px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.5;}
+.add-account-btn{width:100%;padding:12px;background:transparent;color:var(--accent);border:1px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .2s;margin-top:10px;}
+.add-account-btn:hover{background:var(--bg3);}
+.login-error{color:var(--accent3);font-size:13px;margin-bottom:10px;display:none;padding:10px 14px;background:rgba(255,59,48,.08);border-radius:8px;}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;z-index:100;}
+[data-theme="dark"] .sidebar{background:rgba(28,28,30,0.9);}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:24px;}
+.sidebar-logo .icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.sidebar-logo span{font-size:15px;font-weight:600;letter-spacing:-.3px;line-height:1.2;}
+.nav-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:0 12px;margin-bottom:4px;margin-top:16px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--accent);color:#fff;}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+.sidebar-bottom{margin-top:auto;}
+.account-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg3);cursor:pointer;margin-bottom:6px;transition:opacity .2s;}
+.account-pill:hover{opacity:.8;}
+.av-lg{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.account-info{flex:1;min-width:0;}
+.account-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.account-class{font-size:11px;color:var(--text2);}
+.active-dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);flex-shrink:0;}
+.theme-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);margin-top:6px;}
+.tog{width:36px;height:20px;background:var(--bg3);border-radius:10px;position:relative;border:1px solid var(--border);transition:background .2s;}
+.tog.on{background:var(--accent);}
+.tog-k{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s;}
+.tog.on .tog-k{transform:translateX(16px);}
+
+/* MAIN */
+.main{margin-left:240px;padding:32px;min-height:100vh;}
+.page{display:none;}
+.page.active{display:block;}
+.page-header{margin-bottom:28px;}
+.page-title{font-size:28px;font-weight:600;letter-spacing:-.5px;}
+.page-sub{font-size:14px;color:var(--text2);margin-top:4px;}
+
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:14px;padding:24px 0;}
+
+/* CARDS */
+.cards-row{display:grid;gap:16px;margin-bottom:24px;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.c4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--bg2);border-radius:var(--radius);padding:24px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.card-sm{padding:18px 20px;}
+.card-link{cursor:pointer;transition:box-shadow .2s,transform .15s;}
+.card-link:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+.stat-label{font-size:13px;color:var(--text2);font-weight:500;margin-bottom:6px;}
+.stat-val{font-size:30px;font-weight:600;letter-spacing:-.5px;}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:6px;}
+.badge-up{background:rgba(52,199,89,.15);color:#34c759;}
+.badge-down{background:rgba(255,59,48,.15);color:#ff3b30;}
+.badge-neu{background:var(--bg3);color:var(--text2);}
+
+/* NOTES */
+.subject-row{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);cursor:pointer;transition:box-shadow .2s,transform .15s;margin-bottom:8px;}
+.subject-row:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+.s-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.s-name{flex:1;font-size:14px;font-weight:500;}
+.s-prof{font-size:12px;color:var(--text2);}
+.s-avg{font-size:20px;font-weight:600;min-width:48px;text-align:right;letter-spacing:-.3px;}
+.bar-wrap{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:2px;transition:width .6s;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border-radius:24px;padding:32px;width:100%;max-width:520px;max-height:80vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2);position:relative;}
+.modal-close{position:absolute;top:20px;right:20px;width:28px;height:28px;border-radius:50%;background:var(--bg3);border:none;cursor:pointer;font-size:14px;color:var(--text2);display:flex;align-items:center;justify-content:center;}
+.modal-title{font-size:20px;font-weight:600;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px;}
+.grade-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.grade-row:last-child{border:none;}
+.grade-date{font-size:12px;color:var(--text3);}
+.grade-comment{font-size:13px;color:var(--text2);margin-top:2px;}
+.grade-val{font-size:22px;font-weight:600;letter-spacing:-.3px;}
+.grade-coeff{font-size:11px;color:var(--text3);text-align:right;margin-top:2px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.stat-mini{background:var(--bg3);border-radius:12px;padding:12px;text-align:center;}
+.stat-mini-val{font-size:18px;font-weight:600;}
+.stat-mini-lab{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* EDT */
+.edt-nav{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.edt-btn{padding:8px 16px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;}
+.edt-btn:hover{background:var(--bg3);}
+.week-label{font-size:15px;font-weight:600;flex:1;text-align:center;}
+.export-btn{padding:8px 16px;border-radius:20px;background:var(--accent2);border:none;font-size:13px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit;}
+.edt-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.edt-day-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:center;margin-bottom:6px;}
+.cours{border-radius:12px;padding:12px;border-left:3px solid transparent;font-size:12px;margin-bottom:6px;transition:transform .15s;cursor:default;}
+.cours:hover{transform:scale(1.02);}
+.cours-name{font-weight:600;margin-bottom:2px;}
+.cours-info{opacity:.7;font-size:11px;}
+.cours-time{font-size:10px;margin-top:4px;opacity:.6;}
+
+/* DEVOIRS */
+.devoir-item{padding:18px 20px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);margin-bottom:8px;transition:box-shadow .2s;}
+.devoir-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.dv-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer;font-size:11px;}
+.dv-check.done{background:var(--accent2);border-color:var(--accent2);color:#fff;}
+.dv-mat{font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:3px 8px;border-radius:6px;}
+.dv-date{font-size:12px;color:var(--text3);margin-left:auto;}
+.dv-titre{font-size:14px;font-weight:500;line-height:1.4;}
+.btn-ia{padding:7px 14px;border-radius:20px;background:linear-gradient(135deg,#0071e3,#00c7ff);color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:10px;}
+.btn-ia:hover{opacity:.85;}
+
+/* MESSAGES */
+.msg-item{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:box-shadow .2s,transform .15s;}
+.msg-item:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+.msg-unread{border-left:3px solid var(--accent);}
+.msg-av{width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex-shrink:0;}
+.msg-body{flex:1;min-width:0;}
+.msg-sujet{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.msg-de{font-size:12px;color:var(--text2);margin-top:2px;}
+.msg-date{font-size:11px;color:var(--text3);flex-shrink:0;}
+.msg-content{font-size:14px;line-height:1.6;color:var(--text);white-space:pre-wrap;}
+
+/* VIE SCOLAIRE */
+.event-item{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);margin-bottom:6px;}
+
+/* IA PANEL */
+.ia-panel{position:fixed;right:0;top:0;bottom:0;width:380px;background:var(--bg2);border-left:1px solid var(--border);box-shadow:-8px 0 40px rgba(0,0,0,.1);display:none;flex-direction:column;z-index:200;}
+.ia-panel.open{display:flex;}
+.ia-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ia-header h3{font-size:16px;font-weight:600;}
+.ia-close{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:none;cursor:pointer;font-size:14px;color:var(--text2);}
+.ia-ctx{padding:12px 24px;background:var(--bg3);font-size:12px;color:var(--text2);line-height:1.4;border-bottom:1px solid var(--border);}
+.ia-msgs{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px;}
+.ia-msg{max-width:85%;padding:12px 14px;border-radius:16px;font-size:13px;line-height:1.5;}
+.ia-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px;}
+.ia-msg.ai{align-self:flex-start;background:var(--bg3);border-bottom-left-radius:4px;}
+.ia-row{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.ia-input{flex:1;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text);font-family:inherit;outline:none;}
+.ia-send{width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;color:#fff;cursor:pointer;font-size:16px;}
+
+/* NOTIF */
+.notif-banner{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 20px;box-shadow:var(--shadow2);z-index:500;display:flex;align-items:center;gap:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s,top .3s;white-space:nowrap;}
+.notif-banner.show{opacity:1;top:32px;}
+.n-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);}
+
+/* CONFIG */
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);margin-bottom:6px;}
+.config-input{padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:inherit;outline:none;width:220px;}
+
+/* MINI GRAPH */
+.mini-graph{height:60px;display:flex;align-items:flex-end;gap:4px;margin-top:12px;}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;background:var(--accent);opacity:.25;transition:height .6s;}
+.mini-bar.active{opacity:1;}
+
+/* API STATUS */
+.api-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:20px;margin-top:8px;}
+.api-status.live{background:rgba(52,199,89,.12);color:#34c759;}
+.api-status.demo{background:rgba(255,159,10,.12);color:#ff9f0a;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page.active>*{animation:fadeUp .25s ease both;}
+.page.active>*:nth-child(2){animation-delay:.05s;}
+.page.active>*:nth-child(3){animation-delay:.1s;}
+.page.active>*:nth-child(4){animation-delay:.15s;}
+
+.account-switcher{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.acc-tab{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;}
+.acc-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.acc-av{width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon">📚</div>
+      <span>EcoleDirecte Ultra</span>
+    </div>
+    <h2>Bienvenue</h2>
+    <p>Connecte-toi avec ton compte EcoleDirecte</p>
+    <div id="accounts-list"></div>
+    <div id="login-form">
+      <div class="field"><label>Identifiant</label><input type="text" id="inp-user" placeholder="Ton identifiant ED"/></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="inp-pass" placeholder="••••••••"/></div>
+      <div class="field"><label>Prénom affiché</label><input type="text" id="inp-name" placeholder="Ex: Lucas"/></div>
+      <div class="login-error" id="login-err"></div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">Se connecter</button>
+    </div>
+    <button class="add-account-btn" id="add-acc-btn" style="display:none" onclick="showAddForm()">+ Ajouter un compte</button>
+    <p class="login-note">Tes identifiants restent sur ton appareil uniquement.<br/>EcoleDirecte Ultra n'est pas affilié à Aplim.</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="icon">📚</div>
+      <span>EcoleDirecte Ultra</span>
+    </div>
+    <div class="nav-label">Général</div>
+    <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">⊞</span> Dashboard</div>
+    <div class="nav-item" data-page="notes" onclick="showPage('notes',this)"><span class="nav-icon">★</span> Notes</div>
+    <div class="nav-item" data-page="edt" onclick="showPage('edt',this)"><span class="nav-icon">◫</span> Emploi du temps</div>
+    <div class="nav-item" data-page="devoirs" onclick="showPage('devoirs',this)"><span class="nav-icon">✎</span> Devoirs</div>
+    <div class="nav-label">Vie scolaire</div>
+    <div class="nav-item" data-page="vie" onclick="showPage('vie',this)"><span class="nav-icon">◈</span> Absences & retards</div>
+    <div class="nav-item" data-page="messages" onclick="showPage('messages',this)"><span class="nav-icon">✉</span> Messages <span id="msg-badge" style="margin-left:auto;background:var(--accent3);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none">!</span></div>
+    <div class="nav-label">Moi</div>
+    <div class="nav-item" data-page="config" onclick="showPage('config',this)"><span class="nav-icon">⚙</span> Paramètres</div>
+    <div class="sidebar-bottom">
+      <div id="sidebar-accs"></div>
+      <div class="theme-row" onclick="toggleTheme()">
+        <span>Mode sombre</span>
+        <div class="tog" id="tog"><div class="tog-k"></div></div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title" id="dash-welcome">Bonjour 👋</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
+          <div class="page-sub" id="dash-date"></div>
+          <span id="api-badge" class="api-status demo">● Données démo</span>
+        </div>
+      </div>
+      <div class="cards-row c4">
+        <div class="card card-sm card-link" onclick="showPage('notes',document.querySelector('[data-page=notes]'))">
+          <div class="stat-label">Moyenne générale</div>
+          <div class="stat-val" id="s-moy">—</div>
+          <div class="badge badge-up" id="s-moy-badge">↑ ce trim.</div>
+        </div>
+        <div class="card card-sm card-link" onclick="showPage('devoirs',document.querySelector('[data-page=devoirs]'))">
+          <div class="stat-label">Devoirs à rendre</div>
+          <div class="stat-val" id="s-dv">—</div>
+          <div class="stat-sub">cette semaine</div>
+        </div>
+        <div class="card card-sm card-link" onclick="showPage('vie',document.querySelector('[data-page=vie]'))">
+          <div class="stat-label">Absences</div>
+          <div class="stat-val" id="s-abs">—</div>
+          <div class="stat-sub">ce trimestre</div>
+        </div>
+        <div class="card card-sm card-link" onclick="showPage('edt',document.querySelector('[data-page=edt]'))">
+          <div class="stat-label">Cours aujourd'hui</div>
+          <div class="stat-val" id="s-cours">—</div>
+          <div class="stat-sub" id="s-cours-sub"></div>
+        </div>
+      </div>
+      <div class="cards-row c2">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <span style="font-size:15px;font-weight:600;">Prochains devoirs</span>
+            <span style="font-size:12px;color:var(--accent);cursor:pointer;" onclick="showPage('devoirs',document.querySelector('[data-page=devoirs]'))">Voir tout →</span>
+          </div>
+          <div id="dash-dv"></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:15px;font-weight:600;">Évolution moyenne</span>
+            <span style="font-size:12px;color:var(--text3);">8 semaines</span>
+          </div>
+          <div class="mini-graph" id="dash-graph"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <span style="font-size:15px;font-weight:600;">Aujourd'hui</span>
+          <span style="font-size:12px;color:var(--accent);cursor:pointer;" onclick="showPage('edt',document.querySelector('[data-page=edt]'))">Voir EDT complet →</span>
+        </div>
+        <div id="dash-today" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <span style="font-size:15px;font-weight:600;">Derniers messages</span>
+          <span style="font-size:12px;color:var(--accent);cursor:pointer;" onclick="showPage('messages',document.querySelector('[data-page=messages]'))">Voir tout →</span>
+        </div>
+        <div id="dash-msgs"></div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="page" id="page-notes">
+      <div class="page-header"><div class="page-title">Notes</div><div class="page-sub">Trimestre en cours</div></div>
+      <div class="account-switcher" id="notes-sw"></div>
+      <div id="notes-loading" class="loading-state"><div class="spinner"></div> Chargement des notes…</div>
+      <div id="notes-content" style="display:none">
+        <div class="cards-row c3" style="margin-bottom:20px;">
+          <div class="card card-sm"><div class="stat-label">Moyenne générale</div><div class="stat-val" id="n-moy">—</div></div>
+          <div class="card card-sm"><div class="stat-label">Meilleure matière</div><div class="stat-val" id="n-best" style="font-size:16px;padding-top:4px;">—</div></div>
+          <div class="card card-sm"><div class="stat-label">À travailler</div><div class="stat-val" id="n-worst" style="font-size:16px;padding-top:4px;">—</div></div>
+        </div>
+        <div id="subject-list"></div>
+      </div>
+    </div>
+
+    <!-- EDT -->
+    <div class="page" id="page-edt">
+      <div class="page-header"><div class="page-title">Emploi du temps</div></div>
+      <div class="edt-nav">
+        <button class="edt-btn" onclick="changeWeek(-1)">← Préc.</button>
+        <span class="week-label" id="week-lbl">—</span>
+        <button class="edt-btn" onclick="changeWeek(1)">Suiv. →</button>
+        <button class="export-btn" onclick="exportICS()">📅 Exporter Apple Calendar</button>
+      </div>
+      <div id="edt-loading" class="loading-state"><div class="spinner"></div> Chargement de l'emploi du temps…</div>
+      <div id="edt-grid" class="edt-grid" style="display:none"></div>
+    </div>
+
+    <!-- DEVOIRS -->
+    <div class="page" id="page-devoirs">
+      <div class="page-header"><div class="page-title">Devoirs</div><div class="page-sub">Clique sur ✦ Aide IA pour de l'aide</div></div>
+      <div class="account-switcher" id="dv-sw"></div>
+      <div id="dv-loading" class="loading-state"><div class="spinner"></div> Chargement des devoirs…</div>
+      <div id="dv-list" style="display:none"></div>
+    </div>
+
+    <!-- VIE SCOLAIRE -->
+    <div class="page" id="page-vie">
+      <div class="page-header"><div class="page-title">Vie scolaire</div></div>
+      <div id="vie-loading" class="loading-state"><div class="spinner"></div> Chargement…</div>
+      <div id="vie-list" style="display:none"></div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="page" id="page-messages">
+      <div class="page-header"><div class="page-title">Messages</div></div>
+      <div id="msg-loading" class="loading-state"><div class="spinner"></div> Chargement des messages…</div>
+      <div id="msg-list" style="display:none"></div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="page" id="page-config">
+      <div class="page-header"><div class="page-title">Paramètres</div></div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:12px;">🤖 Assistant IA (Gemini)</div>
+      <div class="config-row">
+        <div><div style="font-size:14px;font-weight:500;">Clé API Gemini</div><div style="font-size:12px;color:var(--text2);">Gratuite sur <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a></div></div>
+        <input class="config-input" type="password" id="gemini-inp" placeholder="AIzaSy…" oninput="saveGemini(this.value)"/>
+      </div>
+      <div style="font-size:16px;font-weight:600;margin:20px 0 12px;">👤 Comptes</div>
+      <div id="cfg-accs"></div>
+      <button class="add-account-btn" onclick="showLoginForNew()" style="max-width:300px;margin-top:8px;">+ Ajouter un compte</button>
+      <div style="font-size:16px;font-weight:600;margin:20px 0 12px;">🔔 Notifications</div>
+      <div class="config-row">
+        <div><div style="font-size:14px;font-weight:500;">Notifications push</div><div style="font-size:12px;color:var(--text2);">Alerte sur nouvelles notes</div></div>
+        <button class="btn-primary" onclick="askNotif()" style="width:auto;padding:8px 16px;font-size:13px;">Activer</button>
+      </div>
+      <div style="font-size:16px;font-weight:600;margin:20px 0 12px;">ℹ️ À propos</div>
+      <div class="config-row">
+        <div><div style="font-size:14px;font-weight:500;">EcoleDirecte Ultra</div><div style="font-size:12px;color:var(--text2);">Non affilié à Aplim · Open source</div></div>
+        <span style="font-size:13px;color:var(--text3);">v2.0</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL NOTE DETAIL -->
+<div class="modal-overlay" id="modal-note">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-note')">✕</button>
+    <div class="modal-title" id="mn-title"></div>
+    <div class="modal-sub" id="mn-sub"></div>
+    <div class="stats-grid" id="mn-stats"></div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;">Toutes les notes</div>
+    <div id="mn-grades"></div>
+  </div>
+</div>
+
+<!-- MODAL MESSAGE DETAIL -->
+<div class="modal-overlay" id="modal-msg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-msg')">✕</button>
+    <div class="modal-title" id="mm-title"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0 20px;">
+      <div class="msg-av" id="mm-av" style="width:36px;height:36px;font-size:13px;"></div>
+      <div><div style="font-size:14px;font-weight:500;" id="mm-de"></div><div style="font-size:12px;color:var(--text3);" id="mm-date"></div></div>
+    </div>
+    <div class="msg-content" id="mm-body"></div>
+  </div>
+</div>
+
+<!-- IA PANEL -->
+<div class="ia-panel" id="ia-panel">
+  <div class="ia-header">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#0071e3,#00c7ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">✦</div>
+      <h3>Assistant IA</h3>
+    </div>
+    <button class="ia-close" onclick="closeIA()">✕</button>
+  </div>
+  <div class="ia-ctx" id="ia-ctx"></div>
+  <div class="ia-msgs" id="ia-msgs"></div>
+  <div class="ia-row">
+    <input class="ia-input" id="ia-inp" placeholder="Pose ta question…" onkeydown="if(event.key==='Enter')sendIA()"/>
+    <button class="ia-send" onclick="sendIA()">↑</button>
+  </div>
+</div>
+
+<!-- NOTIF -->
+<div class="notif-banner" id="notif"><div class="n-dot"></div><span id="notif-txt"></span></div>
+
+<script>
+// ═══════════════════════════════════════════
+// ÉTAT
+// ═══════════════════════════════════════════
+let accounts = JSON.parse(localStorage.getItem('edu_accounts')||'[]');
+let activeIdx = +localStorage.getItem('edu_active')||0;
+let geminiKey = localStorage.getItem('edu_gemini')||'';
+let weekOffset = 0;
+let isDark = localStorage.getItem('edu_dark')==='1';
+let doneSet = new Set(JSON.parse(localStorage.getItem('edu_done')||'[]'));
+let apiData = {}; // données ED par compte (indexé par username)
+let iaHistory = [];
+let iaCtx = '';
+const COLORS = ['#0071e3','#34c759','#ff9f0a','#af52de','#ff3b30','#00c7ff'];
+// Proxy Netlify (voir proxy/ecoledirecte.js)
+const PROXY = '/.netlify/functions/ed-proxy';
+
+// ═══════════════════════════════════════════
+// DONNÉES DÉMO (fallback si API indispo)
+// ═══════════════════════════════════════════
+function demoData(name) {
+  return {
+    _source:'demo',
+    eleve:{nom:name,classe:'Terminale B2'},
+    moyenne:14.2,
+    moyHist:[13.1,13.4,13.8,14.0,13.7,14.1,14.0,14.2],
+    absences:2,
+    matieres:[
+      {nom:'Mathématiques',prof:'M. Dupont',moy:16.5,coeff:6,notes:[{val:18,date:'10 jan.',coeff:2,comment:'Très bien'},{val:15,date:'20 jan.',coeff:2,comment:'Bien'},{val:16.5,date:'28 jan.',coeff:2,comment:''}],color:'#0071e3'},
+      {nom:'Français',prof:'Mme Martin',moy:13.0,coeff:4,notes:[{val:12,date:'8 jan.',coeff:2,comment:'Doit approfondir'},{val:14,date:'22 jan.',coeff:2,comment:'Progrès'}],color:'#ff9f0a'},
+      {nom:'Histoire-Géo',prof:'M. Bernard',moy:15.2,coeff:3,notes:[{val:16,date:'5 jan.',coeff:1,comment:''},{val:14,date:'15 jan.',coeff:2,comment:'Bon travail'},{val:15.5,date:'27 jan.',coeff:1,comment:''}],color:'#34c759'},
+      {nom:'Anglais',prof:'Mme Clark',moy:17.0,coeff:3,notes:[{val:17,date:'9 jan.',coeff:1,comment:''},{val:18,date:'21 jan.',coeff:2,comment:'Excellent'}],color:'#af52de'},
+      {nom:'Physique-Chimie',prof:'M. Leroy',moy:12.5,coeff:4,notes:[{val:13,date:'7 jan.',coeff:2,comment:''},{val:12,date:'17 jan.',coeff:2,comment:'Revoir les formules'}],color:'#ff3b30'},
+      {nom:'SVT',prof:'Mme Petit',moy:14.0,coeff:3,notes:[{val:14,date:'11 jan.',coeff:2,comment:''},{val:13,date:'23 jan.',coeff:1,comment:''}],color:'#00c7ff'},
+      {nom:'EPS',prof:'M. Durand',moy:16.0,coeff:2,notes:[{val:16,date:'14 jan.',coeff:1,comment:''},{val:16,date:'25 jan.',coeff:1,comment:''}],color:'#5ac8fa'},
+    ],
+    devoirs:[
+      {id:1,matiere:'Mathématiques',titre:'Exercices sur les limites — fiche n°4',date:'Lundi 20 jan.',color:'#0071e3'},
+      {id:2,matiere:'Français',titre:'Commentaire composé : extrait de Camus, L\'Étranger',date:'Mardi 21 jan.',color:'#ff9f0a'},
+      {id:3,matiere:'Histoire-Géo',titre:'Apprendre le chapitre 3 sur la mondialisation',date:'Mercredi 22 jan.',color:'#34c759'},
+      {id:4,matiere:'Anglais',titre:'Vocabulary quiz — unit 5 words',date:'Jeudi 23 jan.',color:'#af52de'},
+      {id:5,matiere:'Physique-Chimie',titre:'TP : Compte-rendu chute libre',date:'Vendredi 24 jan.',color:'#ff3b30'},
+    ],
+    edt:{
+      'Lundi':[{nom:'Mathématiques',salle:'B204',heure:'08:00',fin:'10:00',color:'#0071e3',bg:'rgba(0,113,227,.1)'},{nom:'Français',salle:'A101',heure:'10:15',fin:'12:15',color:'#ff9f0a',bg:'rgba(255,159,10,.1)'},{nom:'EPS',salle:'Gymnase',heure:'14:00',fin:'16:00',color:'#5ac8fa',bg:'rgba(90,200,250,.1)'}],
+      'Mardi':[{nom:'Anglais',salle:'C305',heure:'08:00',fin:'09:00',color:'#af52de',bg:'rgba(175,82,222,.1)'},{nom:'Physique',salle:'Labo 2',heure:'09:15',fin:'11:15',color:'#ff3b30',bg:'rgba(255,59,48,.1)'},{nom:'Histoire-Géo',salle:'A203',heure:'13:00',fin:'15:00',color:'#34c759',bg:'rgba(52,199,89,.1)'}],
+      'Mercredi':[{nom:'Mathématiques',salle:'B204',heure:'08:00',fin:'09:00',color:'#0071e3',bg:'rgba(0,113,227,.1)'},{nom:'SVT',salle:'Labo 1',heure:'09:15',fin:'11:15',color:'#00c7ff',bg:'rgba(0,199,255,.1)'}],
+      'Jeudi':[{nom:'Français',salle:'A101',heure:'10:15',fin:'11:15',color:'#ff9f0a',bg:'rgba(255,159,10,.1)'},{nom:'Mathématiques',salle:'B204',heure:'14:15',fin:'16:15',color:'#0071e3',bg:'rgba(0,113,227,.1)'}],
+      'Vendredi':[{nom:'Physique',salle:'Labo 2',heure:'08:00',fin:'10:00',color:'#ff3b30',bg:'rgba(255,59,48,.1)'},{nom:'EPS',salle:'Gymnase',heure:'14:00',fin:'16:00',color:'#5ac8fa',bg:'rgba(90,200,250,.1)'}],
+    },
+    vieScolaire:[
+      {type:'Absence',desc:'Absence injustifiée — cours de Physique',date:'12 jan.',icon:'⚠️'},
+      {type:'Absence',desc:'Absence justifiée — maladie',date:'8 jan.',icon:'🤒'},
+      {type:'Retard',desc:'Retard de 10 min — Mathématiques',date:'5 jan.',icon:'⏰'},
+    ],
+    messages:[
+      {de:'M. Dupont',sujet:'Correction du DS de Mathématiques',date:'hier',lu:false,body:'Bonjour,\n\nJe vous transmets les corrections du dernier DS de Mathématiques.\nLa moyenne de classe est de 12,4/20.\n\nBonne journée,\nM. Dupont'},
+      {de:'Administration',sujet:'Conseil de classe — convocation parents',date:'il y a 3j',lu:false,body:'Madame, Monsieur,\n\nVous êtes convoqué(e) au conseil de classe du 2ème trimestre qui se tiendra le vendredi 31 janvier à 17h00.\n\nCordialement,\nLa direction'},
+      {de:'Mme Martin',sujet:'Rappel : devoir maison pour vendredi',date:'il y a 5j',lu:true,body:'Bonjour à tous,\n\nPetit rappel : le commentaire composé sur L\'Étranger de Camus est à rendre vendredi 24 janvier.\n\nBonne rédaction,\nMme Martin'},
+    ],
+  };
+}
+
+// ═══════════════════════════════════════════
+// API ECOLEDIRECTE (via proxy Netlify)
+// ═══════════════════════════════════════════
+async function edAPI(path, body, token) {
+  try {
+    const res = await fetch(PROXY, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({path, body, token})
+    });
+    if(!res.ok) throw new Error('Proxy error '+res.status);
+    return await res.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+async function loginED(username, password) {
+  const payload = `data=${encodeURIComponent(JSON.stringify({identifiant:username,motdepasse:btoa(password),isRelogin:false,uuid:'',fa:[]}))}`;
+  const res = await edAPI('/v3/login.awp?v=4', payload, null);
+  return res;
+}
+
+async function fetchAllData(account) {
+  const key = account.username;
+  // Si déjà en cache récent (< 5 min)
+  const cached = sessionStorage.getItem('ed_'+key);
+  if(cached) { const p=JSON.parse(cached); if(Date.now()-p._ts<300000) return p; }
+
+  // Tentative login ED
+  const login = await loginED(account.username, account.password);
+  if(!login || login.code !== 200) {
+    // Fallback démo
+    const d = demoData(account.displayname);
+    d._source = 'demo';
+    return d;
+  }
+
+  const token = login.token;
+  const eleve = login.data?.accounts?.[0];
+  const id = eleve?.id;
+  const type = eleve?.typeCompte === 'E' ? 'E' : 'E';
+
+  // Fetch parallèle de toutes les données
+  const [notesRes, devoirsRes, edtRes, vieRes, msgRes] = await Promise.all([
+    edAPI(`/v3/${type}/${id}/notes.awp?verbe=get`, `data={}`, token),
+    edAPI(`/v3/${type}/${id}/cahierdetexte.awp?verbe=get`, `data={}`, token),
+    edAPI(`/v3/${type}/${id}/emploidutemps.awp?verbe=get`, `data=${encodeURIComponent(JSON.stringify({dateDebut:getMonday(0).toISOString().slice(0,10),dateFin:getMonday(0,4).toISOString().slice(0,10)}))}`, token),
+    edAPI(`/v3/${type}/${id}/viescolaire.awp?verbe=get`, `data={}`, token),
+    edAPI(`/v3/${type}/${id}/messages.awp?verbe=get`, `data=${encodeURIComponent(JSON.stringify({pagination:0,typeRecuperation:'all',idDossier:0,classeur:1,verifSeparation:0,mediaList:0}))}`, token),
+  ]);
+
+  const data = parseED(eleve, notesRes, devoirsRes, edtRes, vieRes, msgRes, account.displayname);
+  data._ts = Date.now();
+  data._source = 'live';
+  sessionStorage.setItem('ed_'+key, JSON.stringify(data));
+  return data;
+}
+
+function parseED(eleve, notesRes, devoirsRes, edtRes, vieRes, msgRes, displayName) {
+  const demo = demoData(displayName);
+
+  // NOTES
+  let matieres = demo.matieres;
+  let moyenne = demo.moyenne;
+  if(notesRes?.code===200) {
+    const periodes = notesRes.data?.periodes||[];
+    const p = periodes.find(x=>x.periode==='A001')||periodes[0];
+    if(p) {
+      const matColors = ['#0071e3','#ff9f0a','#34c759','#af52de','#ff3b30','#00c7ff','#5ac8fa','#ff6961','#34aadc'];
+      matieres = (p.ensembleMatieres?.disciplines||[]).map((d,i)=>({
+        nom: d.discipline,
+        prof: d.professeurs?.[0]?.nom||'',
+        moy: parseFloat(d.moyenne)||0,
+        coeff: parseFloat(d.coef)||1,
+        color: matColors[i%matColors.length],
+        notes: (notesRes.data?.notes||[]).filter(n=>n.codeMatiere===d.codeMatiere).map(n=>({
+          val: parseFloat(n.valeur)||0,
+          date: n.date||'',
+          coeff: parseFloat(n.coef)||1,
+          comment: n.commentaire||''
+        }))
+      })).filter(m=>m.moy>0);
+      moyenne = parseFloat(p.ensembleMatieres?.moyenneGenerale)||demo.moyenne;
+    }
+  }
+
+  // DEVOIRS
+  let devoirs = demo.devoirs;
+  if(devoirsRes?.code===200) {
+    const colors = ['#0071e3','#ff9f0a','#34c759','#af52de','#ff3b30','#00c7ff'];
+    devoirs = Object.values(devoirsRes.data||{}).flatMap((jour,ji)=>
+      (Array.isArray(jour)?jour:[]).map((dv,i)=>({
+        id: dv.id||ji*100+i,
+        matiere: dv.matiere||'',
+        titre: dv.nomRessource||dv.contenu?.replace(/<[^>]*>/g,'')||'',
+        date: dv.date||'',
+        color: colors[i%colors.length]
+      }))
+    ).filter(d=>d.titre).slice(0,20);
+    if(!devoirs.length) devoirs = demo.devoirs;
+  }
+
+  // EDT
+  let edt = demo.edt;
+  if(edtRes?.code===200) {
+    const jours = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+    const cols = ['#0071e3','#ff9f0a','#34c759','#af52de','#ff3b30','#00c7ff','#5ac8fa'];
+    const matToColor = {};
+    let ci=0;
+    edt = {};
+    jours.forEach(j=>edt[j]=[]);
+    (edtRes.data||[]).forEach(c=>{
+      const d = new Date(c.start_date||c.date);
+      const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      const jour = dayNames[d.getDay()];
+      if(!edt[jour]) return;
+      const mat = c.matiere||c.text||'Cours';
+      if(!matToColor[mat]){matToColor[mat]=cols[ci%cols.length];ci++;}
+      const col=matToColor[mat];
+      edt[jour].push({
+        nom:mat,salle:c.salle||c.location||'',
+        heure:c.start_date?.slice(11,16)||'',
+        fin:c.end_date?.slice(11,16)||'',
+        color:col, bg:col+'1a'
+      });
+    });
+  }
+
+  // VIE SCOLAIRE
+  let vieScolaire = demo.vieScolaire;
+  if(vieRes?.code===200) {
+    const absIcon={absence:'⚠️',retard:'⏰',punition:'📋',exclusion:'🚫'};
+    vieScolaire = (vieRes.data?.absencesRetards||[]).map(v=>({
+      type: v.justifie==='O'?'Absence justifiée':'Absence',
+      desc: v.motif||v.type||'',
+      date: v.date||'',
+      icon: absIcon[v.typeElement?.toLowerCase()]||'⚠️'
+    }));
+    if(!vieScolaire.length) vieScolaire = demo.vieScolaire;
+  }
+
+  // MESSAGES
+  let messages = demo.messages;
+  if(msgRes?.code===200) {
+    messages = (msgRes.data?.messages||[]).slice(0,20).map(m=>({
+      de: m.from?.name||m.expediteurPrenom+' '+m.expediteurNom||'Inconnu',
+      sujet: m.objet||m.subject||'(sans objet)',
+      date: m.date||m.dateEnvoi||'',
+      lu: m.read||m.lu||false,
+      body: m.content?.replace(/<[^>]*>/g,'')||m.contenu?.replace(/<[^>]*>/g,'')||'(contenu non disponible)',
+      id: m.id
+    }));
+    if(!messages.length) messages = demo.messages;
+  }
+
+  return {
+    eleve:{nom:displayName,classe:eleve?.nomClasse||''},
+    moyenne, moyHist:demo.moyHist, absences:demo.absences,
+    matieres, devoirs, edt, vieScolaire, messages
+  };
+}
+
+// ═══════════════════════════════════════════
+// LOGIN UI
+// ═══════════════════════════════════════════
+function initApp() {
+  if(isDark) document.documentElement.setAttribute('data-theme','dark');
+  if(accounts.length>0){
+    renderLoginAccounts();
+    document.getElementById('add-acc-btn').style.display='block';
+    document.getElementById('login-form').style.display='none';
+  }
+}
+
+function renderLoginAccounts(){
+  document.getElementById('accounts-list').innerHTML=accounts.map((a,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg3);border-radius:12px;margin-bottom:8px;cursor:pointer" onclick="loginAs(${i})">
+      <div style="width:36px;height:36px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff">${a.displayname[0].toUpperCase()}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${a.displayname}</div><div style="font-size:12px;color:var(--text2)">${a.username}</div></div>
+      <span style="color:var(--accent);font-size:13px;font-weight:500">Entrer →</span>
+    </div>
+  `).join('');
+}
+
+function showAddForm(){
+  document.getElementById('accounts-list').style.display='none';
+  document.getElementById('login-form').style.display='block';
+  document.getElementById('add-acc-btn').style.display='none';
+}
+
+function showLoginForNew(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('accounts-list').style.display='none';
+  document.getElementById('login-form').style.display='block';
+  document.getElementById('add-acc-btn').style.display='none';
+}
+
+async function doLogin(){
+  const u=document.getElementById('inp-user').value.trim();
+  const p=document.getElementById('inp-pass').value.trim();
+  const n=document.getElementById('inp-name').value.trim();
+  const err=document.getElementById('login-err');
+  if(!u||!p||!n){err.textContent='Remplis tous les champs.';err.style.display='block';return;}
+  err.style.display='none';
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Connexion…';
+  const acc={username:u,password:p,displayname:n,color:COLORS[accounts.length%COLORS.length]};
+  accounts.push(acc);
+  localStorage.setItem('edu_accounts',JSON.stringify(accounts));
+  activeIdx=accounts.length-1;
+  localStorage.setItem('edu_active',activeIdx);
+  btn.disabled=false;btn.textContent='Se connecter';
+  launchApp();
+}
+
+function loginAs(i){activeIdx=i;localStorage.setItem('edu_active',i);launchApp();}
+
+// ═══════════════════════════════════════════
+// APP LAUNCH
+// ═══════════════════════════════════════════
+async function launchApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  if(geminiKey) document.getElementById('gemini-inp').value=geminiKey;
+  renderSidebar();
+  renderDashboard();
+  renderConfig();
+}
+
+// ═══════════════════════════════════════════
+// DONNÉES PAR COMPTE (avec cache)
+// ═══════════════════════════════════════════
+async function getData(idx){
+  const acc = accounts[idx??activeIdx];
+  if(!acc) return demoData('Élève');
+  if(!apiData[acc.username]){
+    apiData[acc.username] = fetchAllData(acc); // Promise
+  }
+  return apiData[acc.username];
+}
+
+// ═══════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════
+function renderSidebar(){
+  document.getElementById('sidebar-accs').innerHTML=accounts.map((a,i)=>`
+    <div class="account-pill" onclick="switchAcc(${i})" style="opacity:${i===activeIdx?1:.5}">
+      <div class="av-lg" style="background:${a.color}">${a.displayname[0].toUpperCase()}</div>
+      <div class="account-info"><div class="account-name">${a.displayname}</div><div class="account-class">EcoleDirecte</div></div>
+      ${i===activeIdx?'<div class="active-dot"></div>':''}
+    </div>
+  `).join('');
+  const t=document.getElementById('tog');
+  isDark?t.classList.add('on'):t.classList.remove('on');
+}
+
+function switchAcc(i){
+  activeIdx=i;localStorage.setItem('edu_active',i);
+  renderSidebar();renderDashboard();
+  // Forcer rechargement pages
+  apiData[accounts[i].username]=null;
+  showNotif('Compte : '+accounts[i].displayname);
+}
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  // Charger données à la demande
+  if(id==='notes') renderNotes();
+  if(id==='edt') renderEDT();
+  if(id==='devoirs') renderDevoirs();
+  if(id==='vie') renderVie();
+  if(id==='messages') renderMessages();
+}
+
+function toggleTheme(){
+  isDark=!isDark;localStorage.setItem('edu_dark',isDark?'1':'0');
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'');
+  renderSidebar();
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+async function renderDashboard(){
+  const a=accounts[activeIdx];
+  document.getElementById('dash-welcome').textContent='Bonjour, '+a.displayname+' 👋';
+  document.getElementById('dash-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const d=await getData();
+  const src=d._source==='live';
+  document.getElementById('api-badge').className='api-status '+(src?'live':'demo');
+  document.getElementById('api-badge').textContent=src?'● En direct':'● Données démo';
+  document.getElementById('s-moy').textContent=d.moyenne.toFixed(1);
+  document.getElementById('s-dv').textContent=d.devoirs.filter(x=>!doneSet.has(x.id)).length;
+  document.getElementById('s-abs').textContent=d.absences;
+  const todayKey=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'][new Date().getDay()];
+  const tc=d.edt[todayKey]||[];
+  document.getElementById('s-cours').textContent=tc.length;
+
+  // Devoirs
+  const dv=d.devoirs.filter(x=>!doneSet.has(x.id)).slice(0,4);
+  document.getElementById('dash-dv').innerHTML=dv.length?dv.map(v=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${v.color};flex-shrink:0"></div>
+      <div style="flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.titre}</div>
+      <div style="font-size:11px;color:var(--text3);flex-shrink:0">${v.date}</div>
+    </div>
+  `).join(''):'<div style="color:var(--text2);font-size:13px;padding:8px 0">Aucun devoir à venir 🎉</div>';
+
+  // Graph
+  const mx=Math.max(...d.moyHist),mn=Math.min(...d.moyHist);
+  document.getElementById('dash-graph').innerHTML=d.moyHist.map((v,i)=>{
+    const h=20+((v-mn)/(mx-mn||1))*40;
+    return `<div class="mini-bar ${i===d.moyHist.length-1?'active':''}" style="height:${h}px" title="${v}"></div>`;
+  }).join('');
+
+  // EDT aujourd'hui
+  document.getElementById('dash-today').innerHTML=tc.length?tc.map(c=>`
+    <div style="padding:10px 14px;border-radius:10px;background:${c.bg};border-left:3px solid ${c.color}">
+      <div style="font-size:13px;font-weight:600;color:${c.color}">${c.nom}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">${c.heure}${c.fin?' → '+c.fin:''} · ${c.salle}</div>
+    </div>
+  `).join(''):'<span style="color:var(--text2);font-size:13px">Pas de cours aujourd\'hui 😴</span>';
+
+  // Messages récents
+  document.getElementById('dash-msgs').innerHTML=d.messages.slice(0,3).map(m=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openMessage(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+      <div style="width:8px;height:8px;border-radius:50%;background:${m.lu?'var(--bg3)':'var(--accent)'};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:${m.lu?500:600};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.sujet}</div><div style="font-size:11px;color:var(--text2)">${m.de}</div></div>
+      <div style="font-size:11px;color:var(--text3);flex-shrink:0">${m.date}</div>
+    </div>
+  `).join('');
+  if(d.messages.some(m=>!m.lu)) document.getElementById('msg-badge').style.display='inline';
+}
+
+// ═══════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════
+async function renderNotes(){
+  setLoading('notes',true);
+  renderAccSwitcher('notes-sw','renderNotes');
+  const d=await getData();
+  document.getElementById('n-moy').textContent=d.moyenne.toFixed(1);
+  const sorted=[...d.matieres].sort((a,b)=>b.moy-a.moy);
+  document.getElementById('n-best').textContent=sorted[0]?.nom.split(' ')[0]+' · '+sorted[0]?.moy.toFixed(1)||'—';
+  document.getElementById('n-worst').textContent=sorted[sorted.length-1]?.nom.split(' ')[0]+' · '+sorted[sorted.length-1]?.moy.toFixed(1)||'—';
+  document.getElementById('subject-list').innerHTML=d.matieres.map(m=>`
+    <div class="subject-row" onclick='openNote(${JSON.stringify(m).replace(/'/g,"\\'")} )'>
+      <div class="s-dot" style="background:${m.color}"></div>
+      <div style="flex:1"><div class="s-name">${m.nom}</div><div class="s-prof">${m.prof}</div></div>
+      <div style="text-align:right;margin-right:16px">
+        <div class="s-avg" style="color:${m.moy>=14?'var(--accent2)':m.moy>=10?'var(--text)':'var(--accent3)'}">${m.moy.toFixed(1)}</div>
+        <div style="font-size:11px;color:var(--text3)">/20</div>
+      </div>
+      <div style="width:80px"><div class="bar-wrap"><div class="bar-fill" style="width:${m.moy/20*100}%;background:${m.color}"></div></div></div>
+    </div>
+  `).join('');
+  setLoading('notes',false);
+}
+
+function openNote(m){
+  document.getElementById('mn-title').textContent=m.nom;
+  document.getElementById('mn-sub').textContent=m.prof+' · Coeff '+m.coeff;
+  const mx=Math.max(...m.notes.map(n=>n.val)),mn2=Math.min(...m.notes.map(n=>n.val));
+  document.getElementById('mn-stats').innerHTML=`
+    <div class="stat-mini"><div class="stat-mini-val" style="color:${m.color}">${m.moy.toFixed(1)}</div><div class="stat-mini-lab">Moyenne</div></div>
+    <div class="stat-mini"><div class="stat-mini-val">${mx.toFixed(1)}</div><div class="stat-mini-lab">Meilleure</div></div>
+    <div class="stat-mini"><div class="stat-mini-val">${mn2.toFixed(1)}</div><div class="stat-mini-lab">Plus basse</div></div>
+  `;
+  document.getElementById('mn-grades').innerHTML=m.notes.map(n=>`
+    <div class="grade-row">
+      <div><div class="grade-date">${n.date}</div>${n.comment?'<div class="grade-comment">'+n.comment+'</div>':''}</div>
+      <div style="text-align:right"><div class="grade-val" style="color:${n.val>=14?'var(--accent2)':n.val>=10?'var(--text)':'var(--accent3)'}">${n.val}<span style="font-size:14px;font-weight:400;color:var(--text3)">/20</span></div><div class="grade-coeff">coeff. ${n.coeff}</div></div>
+    </div>
+  `).join('');
+  openModal('modal-note');
+}
+
+// ═══════════════════════════════════════════
+// EDT
+// ═══════════════════════════════════════════
+async function renderEDT(){
+  setLoading('edt',true);
+  const d=await getData();
+  const jours=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+  const mon=getMonday(weekOffset);
+  document.getElementById('week-lbl').textContent='Semaine du '+mon.toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  document.getElementById('edt-grid').innerHTML=jours.map(j=>`
+    <div>
+      <div class="edt-day-label">${j}</div>
+      ${(d.edt[j]||[]).map(c=>`
+        <div class="cours" style="background:${c.bg};border-left-color:${c.color}">
+          <div class="cours-name" style="color:${c.color}">${c.nom}</div>
+          <div class="cours-info">${c.salle}</div>
+          <div class="cours-time">${c.heure}${c.fin?' → '+c.fin:''}</div>
+        </div>
+      `).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0;text-align:center">Libre</div>'}
+    </div>
+  `).join('');
+  setLoading('edt',false);
+}
+
+function getMonday(offset,addDays=0){
+  const d=new Date();const day=d.getDay()||7;
+  d.setDate(d.getDate()-day+1+offset*7+addDays);return d;
+}
+function changeWeek(dir){weekOffset+=dir;renderEDT();}
+
+// ═══════════════════════════════════════════
+// EXPORT iCAL
+// ═══════════════════════════════════════════
+async function exportICS(){
+  const d=await getData();
+  const jours=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+  const mon=getMonday(weekOffset);
+  let ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//EcoleDirecte Ultra//FR\r\nCALNAME:Emploi du temps\r\n';
+  jours.forEach((jour,di)=>{
+    const date=new Date(mon);date.setDate(mon.getDate()+di);
+    const ds=date.toISOString().replace(/-/g,'').slice(0,8);
+    (d.edt[jour]||[]).forEach(c=>{
+      const h1=(c.heure||'08:00').replace(':','').padStart(4,'0');
+      const h2=(c.fin||c.heure||'09:00').replace(':','').padStart(4,'0');
+      ics+=`BEGIN:VEVENT\r\nSUMMARY:${c.nom}\r\nLOCATION:${c.salle}\r\nDTSTART:${ds}T${h1}00\r\nDTEND:${ds}T${h2}00\r\nEND:VEVENT\r\n`;
+    });
+  });
+  ics+='END:VCALENDAR';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+  a.download='emploi-du-temps.ics';a.click();
+  showNotif('📅 Fichier téléchargé — double-clique pour l\'ajouter à Apple Calendar');
+}
+
+// ═══════════════════════════════════════════
+// DEVOIRS
+// ═══════════════════════════════════════════
+async function renderDevoirs(){
+  setLoading('dv',true);
+  renderAccSwitcher('dv-sw','renderDevoirs');
+  const d=await getData();
+  document.getElementById('dv-list').innerHTML=d.devoirs.map(dv=>`
+    <div class="devoir-item">
+      <div class="devoir-top">
+        <div class="dv-check ${doneSet.has(dv.id)?'done':''}" onclick="toggleDone(${dv.id})">${doneSet.has(dv.id)?'✓':''}</div>
+        <span class="dv-mat" style="background:${dv.color}22;color:${dv.color}">${dv.matiere}</span>
+        <span class="dv-date">${dv.date}</span>
+      </div>
+      <div class="dv-titre" style="${doneSet.has(dv.id)?'opacity:.35;text-decoration:line-through':''}">${dv.titre}</div>
+      <button class="btn-ia" onclick="openIA('${dv.matiere}','${dv.titre.replace(/'/g,"\\'")}')">✦ Aide IA</button>
+    </div>
+  `).join('');
+  setLoading('dv',false);
+}
+
+function toggleDone(id){
+  doneSet.has(id)?doneSet.delete(id):doneSet.add(id);
+  localStorage.setItem('edu_done',JSON.stringify([...doneSet]));
+  renderDevoirs();
+}
+
+// ═══════════════════════════════════════════
+// VIE SCOLAIRE
+// ═══════════════════════════════════════════
+async function renderVie(){
+  setLoading('vie',true);
+  const d=await getData();
+  document.getElementById('vie-list').innerHTML=d.vieScolaire.map(e=>`
+    <div class="event-item">
+      <div style="font-size:18px;width:32px;text-align:center">${e.icon}</div>
+      <div style="flex:1"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--text3)">${e.type}</div><div style="font-size:14px;font-weight:500;margin-top:2px">${e.desc}</div></div>
+      <div style="font-size:12px;color:var(--text2)">${e.date}</div>
+    </div>
+  `).join('');
+  setLoading('vie',false);
+}
+
+// ═══════════════════════════════════════════
+// MESSAGES
+// ═══════════════════════════════════════════
+async function renderMessages(){
+  setLoading('msg',true);
+  const d=await getData();
+  document.getElementById('msg-list').innerHTML=d.messages.map(m=>`
+    <div class="msg-item ${m.lu?'':'msg-unread'}" onclick='openMessage(${JSON.stringify(m).replace(/"/g,"&quot;")})'>
+      <div class="msg-av">${m.de[0].toUpperCase()}</div>
+      <div class="msg-body">
+        <div class="msg-sujet" style="font-weight:${m.lu?500:600}">${m.sujet}</div>
+        <div class="msg-de">${m.de}</div>
+      </div>
+      <div class="msg-date">${m.date}</div>
+    </div>
+  `).join('');
+  setLoading('msg',false);
+}
+
+function openMessage(m){
+  if(typeof m==='string') m=JSON.parse(m.replace(/&quot;/g,'"'));
+  document.getElementById('mm-title').textContent=m.sujet;
+  document.getElementById('mm-av').textContent=m.de[0].toUpperCase();
+  document.getElementById('mm-de').textContent=m.de;
+  document.getElementById('mm-date').textContent=m.date;
+  document.getElementById('mm-body').textContent=m.body||'(Contenu non disponible)';
+  openModal('modal-msg');
+}
+
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
+function renderConfig(){
+  document.getElementById('cfg-accs').innerHTML=accounts.map((a,i)=>`
+    <div class="config-row">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">${a.displayname[0].toUpperCase()}</div>
+        <div><div style="font-size:14px;font-weight:500">${a.displayname}</div><div style="font-size:12px;color:var(--text2)">${a.username}</div></div>
+      </div>
+      <button onclick="removeAcc(${i})" style="padding:6px 12px;border-radius:8px;background:rgba(255,59,48,.1);color:#ff3b30;border:none;font-size:12px;cursor:pointer">Supprimer</button>
+    </div>
+  `).join('');
+}
+
+function saveGemini(v){geminiKey=v;localStorage.setItem('edu_gemini',v);}
+
+function removeAcc(i){
+  if(!confirm('Supprimer ce compte ?'))return;
+  accounts.splice(i,1);localStorage.setItem('edu_accounts',JSON.stringify(accounts));
+  if(!accounts.length){document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';initApp();}
+  else{activeIdx=0;localStorage.setItem('edu_active',0);renderSidebar();renderConfig();}
+}
+
+function askNotif(){
+  if(!('Notification'in window))return alert('Ton navigateur ne supporte pas les notifications.');
+  Notification.requestPermission().then(p=>p==='granted'?showNotif('🔔 Notifications activées !'):null);
+}
+
+// ═══════════════════════════════════════════
+// ASSISTANT IA
+// ═══════════════════════════════════════════
+function openIA(mat,titre){
+  if(!geminiKey){showNotif('⚙️ Configure ta clé Gemini dans Paramètres');showPage('config',document.querySelector('[data-page=config]'));return;}
+  iaCtx=`Matière : ${mat}\nDevoir : ${titre}`;
+  iaHistory=[{role:'user',parts:[{text:'Bonjour, aide-moi avec ce devoir de '+mat+' : '+titre}]}];
+  document.getElementById('ia-ctx').textContent='📚 '+mat+' — '+titre;
+  document.getElementById('ia-msgs').innerHTML='<div class="ia-msg ai">Salut ! Je suis là pour t\'aider avec ce devoir de '+mat+'. Qu\'est-ce que tu veux savoir ?</div>';
+  document.getElementById('ia-panel').classList.add('open');
+}
+
+function closeIA(){document.getElementById('ia-panel').classList.remove('open');iaHistory=[];}
+
+async function sendIA(){
+  const inp=document.getElementById('ia-inp');
+  const msg=inp.value.trim();if(!msg)return;inp.value='';
+  const msgs=document.getElementById('ia-msgs');
+  msgs.innerHTML+=`<div class="ia-msg user">${msg}</div><div class="ia-msg ai" id="ia-load">✦ En train de réfléchir…</div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  iaHistory.push({role:'user',parts:[{text:msg}]});
+  try{
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:`Tu es un assistant scolaire bienveillant pour un lycéen français. Contexte : ${iaCtx}. Réponds en français, de façon claire et pédagogue. Guide l'élève sans faire le travail à sa place.`}]},
+        contents:iaHistory
+      })
+    });
+    const data=await r.json();
+    if(data.error)throw new Error(data.error.message);
+    const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'Je n\'ai pas pu répondre.';
+    iaHistory.push({role:'model',parts:[{text:reply}]});
+    document.getElementById('ia-load')?.remove();
+    msgs.innerHTML+=`<div class="ia-msg ai">${reply.replace(/\n/g,'<br/>')}</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+  }catch(e){
+    document.getElementById('ia-load')?.remove();
+    msgs.innerHTML+=`<div class="ia-msg ai" style="color:var(--accent3)">Erreur : ${e.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+// UTILITAIRES
+// ═══════════════════════════════════════════
+function setLoading(id,on){
+  document.getElementById(id+'-loading').style.display=on?'flex':'none';
+  const c=document.getElementById(id+'-content')||document.getElementById(id+'-list')||document.getElementById(id+'-grid');
+  if(c)c.style.display=on?'none':(id==='edt'?'grid':'block');
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+function showNotif(txt){
+  document.getElementById('notif-txt').textContent=txt;
+  const b=document.getElementById('notif');b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'),3500);
+}
+
+function renderAccSwitcher(id,fn){
+  document.getElementById(id).innerHTML=accounts.map((a,i)=>`
+    <div class="acc-tab ${i===activeIdx?'active':''}" onclick="activeIdx=${i};localStorage.setItem('edu_active',${i});renderSidebar();${fn}()">
+      <div class="acc-av" style="background:${a.color}">${a.displayname[0].toUpperCase()}</div>${a.displayname}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+initApp();
+if(accounts.length>0) launchApp();
+</script>
+</body>
+</html>
