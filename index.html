@@ -585,7 +585,7 @@ async function fetchAllData(account) {
       const d = demoData(account.displayname);
       d._source = 'demo';
       // Quand même essayer de fetcher avec le token
-      const testNotes = await edAPI(\`/v3/E/0/notes.awp?verbe=get\`, 'data={}', token);
+      const testNotes = await edAPI('/v3/E/0/notes.awp?verbe=get', 'data={}', token);
       if(testNotes?.code===200) { d._source='live'; }
       return d;
     }
