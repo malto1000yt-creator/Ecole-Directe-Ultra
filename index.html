@@ -230,6 +230,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="field"><label>Identifiant</label><input type="text" id="inp-user" placeholder="Ton identifiant ED"/></div>
       <div class="field"><label>Mot de passe</label><input type="password" id="inp-pass" placeholder="••••••••"/></div>
       <div class="field"><label>Prénom affiché</label><input type="text" id="inp-name" placeholder="Ex: Lucas"/></div>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0 4px;">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:11px;color:var(--text3);">ou avec ton token</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <div class="field">
+        <label>Token ED <span style="font-weight:400;color:var(--text3);">(optionnel — contourne le QCM)</span></label>
+        <input type="password" id="inp-token" placeholder="Colle ton token ici…"/>
+        <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">Sur <a href="https://ecoledirecte.com" target="_blank" style="color:var(--accent)">ecoledirecte.com</a> → F12 → Application → Local Storage → clé <b>token</b></div>
+      </div>
       <div class="login-error" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Se connecter</button>
     </div>
@@ -550,17 +560,38 @@ async function fetchAllData(account) {
   const cached = sessionStorage.getItem('ed_'+key);
   if(cached) { const p=JSON.parse(cached); if(Date.now()-p._ts<300000) return p; }
 
-  // Tentative login ED
-  const login = await loginED(account.username, account.password);
-  if(!login || login.code !== 200) {
-    // Fallback démo
-    const d = demoData(account.displayname);
-    d._source = 'demo';
-    return d;
+  // Utiliser token manuel si disponible
+  let token = account.manualToken || null;
+  let eleve = null;
+
+  if(!token) {
+    // Tentative login ED
+    const login = await loginED(account.username, account.password);
+    if(!login || login.code !== 200) {
+      const d = demoData(account.displayname);
+      d._source = 'demo';
+      return d;
+    }
+    token = login.token;
+    eleve = login.data?.accounts?.[0];
   }
 
-  const token = login.token;
-  const eleve = login.data?.accounts?.[0];
+  if(!eleve) {
+    // Récupérer infos compte avec le token manuel
+    const infoRes = await edAPI('/v3/login.awp?v=4', 'data='+encodeURIComponent(JSON.stringify({identifiant:account.username,motdepasse:account.password,isRelogin:true,uuid:'',fa:[]})), token);
+    eleve = infoRes?.data?.accounts?.[0] || {id: account.manualToken ? 'unknown' : null, nomClasse:''};
+    // Si on a pas l'id, essayer de le deviner depuis le token
+    if(!eleve.id || eleve.id==='unknown') {
+      const d = demoData(account.displayname);
+      d._source = 'demo';
+      // Quand même essayer de fetcher avec le token
+      const testNotes = await edAPI(\`/v3/E/0/notes.awp?verbe=get\`, 'data={}', token);
+      if(testNotes?.code===200) { d._source='live'; }
+      return d;
+    }
+  }
+  const eleve2 = eleve;
+  eleve = eleve2;
   const id = eleve?.id;
   const type = eleve?.typeCompte === 'E' ? 'E' : 'E';
 
@@ -727,9 +758,10 @@ async function doLogin(){
   const err=document.getElementById('login-err');
   if(!u||!p||!n){err.textContent='Remplis tous les champs.';err.style.display='block';return;}
   err.style.display='none';
+  const t=document.getElementById('inp-token').value.trim();
   const btn=document.getElementById('login-btn');
   btn.disabled=true;btn.textContent='Connexion…';
-  const acc={username:u,password:p,displayname:n,color:COLORS[accounts.length%COLORS.length]};
+  const acc={username:u,password:p,displayname:n,color:COLORS[accounts.length%COLORS.length],manualToken:t||null};
   accounts.push(acc);
   localStorage.setItem('edu_accounts',JSON.stringify(accounts));
   activeIdx=accounts.length-1;
