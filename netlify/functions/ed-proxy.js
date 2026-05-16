@@ -25,24 +25,27 @@ exports.handler = async function(event) {
   }
 
   const { path, body, token } = parsed;
-  const BASE = 'api.ecoledirecte.com';
-
   const postBody = body || '';
+
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Content-Length': Buffer.byteLength(postBody),
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+    'origin': 'https://www.ecoledirecte.com',
+    'referer': 'https://www.ecoledirecte.com/',
+    'x-forwarded-server': 'api.ecoledirecte.com',
+    'x-forwarded-host': 'api.ecoledirecte.com',
+    'x-forwarded-for': '56.15.23.89',
+    'host': 'api.ecoledirecte.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': 'application/json, text/plain, */*',
     'Accept-Language': 'fr-FR,fr;q=0.9',
-    'Origin': 'https://www.ecoledirecte.com',
-    'Referer': 'https://www.ecoledirecte.com/',
   };
   if (token) headers['X-Token'] = token;
 
   return new Promise((resolve) => {
     const req = https.request(
       {
-        hostname: BASE,
+        hostname: 'api.ecoledirecte.com',
         path: path,
         method: 'POST',
         headers,
@@ -55,10 +58,7 @@ exports.handler = async function(event) {
             const json = JSON.parse(data);
             resolve({
               statusCode: 200,
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
               body: JSON.stringify(json),
             });
           } catch(e) {
