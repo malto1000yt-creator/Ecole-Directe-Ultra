@@ -556,44 +556,40 @@ async function loginED(username, password) {
 
 async function fetchAllData(account) {
   const key = account.username;
-  // Si déjà en cache récent (< 5 min)
   const cached = sessionStorage.getItem('ed_'+key);
   if(cached) { const p=JSON.parse(cached); if(Date.now()-p._ts<300000) return p; }
 
-  // Utiliser token manuel si disponible
   let token = account.manualToken || null;
   let eleve = null;
+  let id = null;
+  let type = 'E';
 
-  if(!token) {
-    // Tentative login ED
+  if(token) {
+    // Token manuel : on récupère l'id depuis Session Storage d'ED via le proxy login
+    const infoRes = await edAPI('/v3/login.awp?v=4',
+      'data='+encodeURIComponent(JSON.stringify({identifiant:account.username,motdepasse:account.password,isRelogin:false,uuid:'',fa:[]})),
+      token);
+    eleve = infoRes?.data?.accounts?.[0] || null;
+    if(eleve) { id = eleve.id; type = eleve.typeCompte||'E'; }
+    // Si login échoue avec le token, on essaie quand même avec l'id stocké
+    if(!id) {
+      // Essaie de récupérer les notes sans id (certaines versions d'ED le permettent)
+      const stored = localStorage.getItem('ed_id_'+account.username);
+      if(stored) { id = stored; }
+    }
+  } else {
     const login = await loginED(account.username, account.password);
     if(!login || login.code !== 200) {
-      const d = demoData(account.displayname);
-      d._source = 'demo';
-      return d;
+      const d = demoData(account.displayname); d._source='demo'; return d;
     }
     token = login.token;
     eleve = login.data?.accounts?.[0];
+    if(eleve) { id = eleve.id; type = eleve.typeCompte||'E'; localStorage.setItem('ed_id_'+account.username, id); }
   }
 
-  if(!eleve) {
-    // Récupérer infos compte avec le token manuel
-    const infoRes = await edAPI('/v3/login.awp?v=4', 'data='+encodeURIComponent(JSON.stringify({identifiant:account.username,motdepasse:account.password,isRelogin:true,uuid:'',fa:[]})), token);
-    eleve = infoRes?.data?.accounts?.[0] || {id: account.manualToken ? 'unknown' : null, nomClasse:''};
-    // Si on a pas l'id, essayer de le deviner depuis le token
-    if(!eleve.id || eleve.id==='unknown') {
-      const d = demoData(account.displayname);
-      d._source = 'demo';
-      // Quand même essayer de fetcher avec le token
-      const testNotes = await edAPI('/v3/E/0/notes.awp?verbe=get', 'data={}', token);
-      if(testNotes?.code===200) { d._source='live'; }
-      return d;
-    }
+  if(!id) {
+    const d = demoData(account.displayname); d._source='demo'; return d;
   }
-  const eleve2 = eleve;
-  eleve = eleve2;
-  const id = eleve?.id;
-  const type = eleve?.typeCompte === 'E' ? 'E' : 'E';
 
   // Fetch parallèle de toutes les données
   const [notesRes, devoirsRes, edtRes, vieRes, msgRes] = await Promise.all([
