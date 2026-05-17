@@ -559,12 +559,29 @@ async function loginED(username, password) {
   return res;
 }
 
+async function getExtensionToken() {
+  // Essaie de lire le token depuis l'extension Chrome
+  return new Promise((resolve) => {
+    try {
+      if(typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.get(['edToken','edId'], (data) => {
+          resolve(data.edToken && data.edId ? data : null);
+        });
+      } else { resolve(null); }
+    } catch(e) { resolve(null); }
+  });
+}
+
 async function fetchAllData(account) {
   const key = account.username;
   const cached = sessionStorage.getItem('ed_'+key);
-  if(cached) { const p=JSON.parse(cached); if(Date.now()-p._ts<300000) return p; }
+  if(cached) { const p=JSON.parse(cached); if(Date.now()-p._ts<120000) return p; } // cache 2 min
 
-  let token = account.manualToken || null;
+  // Essayer d'abord le token de l'extension
+  const extData = await getExtensionToken();
+  let token = extData?.edToken || account.manualToken || null;
+  let id = extData?.edId || account.edId || null;
+  if(extData) { account = {...account, manualToken: token, edId: id}; }
   let eleve = null;
   let id = null;
   let type = 'E';
